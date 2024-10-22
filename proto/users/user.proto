@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+option go_package = "grpc_gw_template/protogen/golang/users";
+
+import "google/api/annotations.proto";
+import "google/protobuf/wrappers.proto";
+
+message Empty {}
+
+message User {
+  string id = 1 [ json_name = "id" ];
+  string name = 2 [ json_name = "name" ];
+  repeated string labels = 3 [ json_name = "labels" ];
+  google.protobuf.Int64Value limit = 4 [ json_name = "limit" ];
+}
+
+message CreateUserRequest {
+  string name = 1 [ json_name = "name" ];
+  repeated string labels = 2 [ json_name = "labels" ];
+  google.protobuf.Int64Value limit = 3 [ json_name = "limit" ];
+}
+
+message SearchUserRequest {
+  google.protobuf.UInt64Value limit = 1 [ json_name = "limit"];
+}
+
+message SearchUserResponse {
+  repeated User users = 1 [ json_name = "users" ];
+}
+
+message GetUserRequest {
+  string id = 1 [ json_name = "id" ];
+}
+
+message PatchUserRequest {
+  string id = 1 [ json_name = "id" ];
+  message UserPatch {
+    google.protobuf.StringValue name = 2 [ json_name = "name" ];
+  }
+  UserPatch patch = 2;
+}
+
+message DeleteUserRequest {
+  string id = 1 [ json_name = "id" ];
+}
+
+service Users {
+  rpc Create(CreateUserRequest) returns (User) {
+    option (google.api.http) = {
+      post: "/users"
+      body: "*"
+    };
+  }
+
+  rpc Search(SearchUserRequest) returns (SearchUserResponse) {
+    option (google.api.http) = {
+      get: "/users"
+    };
+  }
+
+  rpc Get(GetUserRequest) returns (User) {
+    option (google.api.http) = {
+      get: "/users/{id}"
+    };
+  }
+
+  rpc Patch(PatchUserRequest) returns (Empty) {
+    option (google.api.http) = {
+      patch: "/users/{id}"
+      body: "patch"
+    };
+  }
+
+  rpc Delete(DeleteUserRequest) returns (Empty) {
+    option (google.api.http) = {
+      delete: "/users/{id}"
+    };
+  }
+}
+
