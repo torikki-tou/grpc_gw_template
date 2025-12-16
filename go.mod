@@ -1,18 +1,17 @@
-module grpc_gw_template
+module buftest
 
-go 1.23.1
+go 1.24.4
 
 require (
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.22.0
-	google.golang.org/genproto/googleapis/api v0.0.0-20241007155032-5fefd90f89a9
-	google.golang.org/grpc v1.67.1
-	google.golang.org/protobuf v1.35.1
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.3
+	google.golang.org/genproto/googleapis/api v0.0.0-20250929231259-57b25ae835d4
+	google.golang.org/grpc v1.76.0
+	google.golang.org/protobuf v1.36.10
 )
 
 require (
-	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0 // indirect
-	golang.org/x/net v0.28.0 // indirect
-	golang.org/x/sys v0.24.0 // indirect
-	golang.org/x/text v0.17.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240930140551-af27646dc61f // indirect
+	golang.org/x/net v0.42.0 // indirect
+	golang.org/x/sys v0.34.0 // indirect
+	golang.org/x/text v0.29.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250929231259-57b25ae835d4 // indirect
 )

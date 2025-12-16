@@ -1,0 +1,19 @@
+openapi: 3.1.0
+paths:
+  /v1/override/{id}:
+    get:
+      tags:
+        - buf_test.ItemService
+      summary: GetItem
+      operationId: buf_test.ItemService.GetItem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: id
+            format: int32
+      responses:
+        "200":
+          description: Success

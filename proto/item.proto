@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package buf_test;
+
+import "google/api/annotations.proto";
+
+option go_package = "/item";
+
+message PingRequest {
+  string field = 1;
+}
+
+message PingResponse {
+  string field = 1;
+}
+
+message HeavyPayload {
+    string field = 1;
+    string field2 = 2;
+    string field3 = 3;
+    string field4 = 4;
+    string field5 = 5;
+}
+
+message HeavyPingRequest {
+    repeated HeavyPayload list = 1;
+}
+
+message HeavyPingResponse {
+    repeated HeavyPayload list = 1;
+}
+
+service PingService {
+  rpc Ping(PingRequest) returns (PingResponse) {
+      option (google.api.http) = {
+        post: "/ping"
+        body: "*"
+      };
+  };
+  rpc HeavyPing(HeavyPingRequest) returns (HeavyPingResponse) {
+      option (google.api.http) = {
+        post: "/heavyping"
+        body: "*"
+      };
+  };
+}
