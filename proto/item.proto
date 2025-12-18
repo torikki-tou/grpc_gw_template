@@ -14,20 +14,29 @@ message PingResponse {
   string field = 1;
 }
 
-message HeavyPayload {
-    string field = 1;
-    string field2 = 2;
-    string field3 = 3;
-    string field4 = 4;
-    string field5 = 5;
+message StreamingRequest {
+  string field = 1;
 }
 
-message HeavyPingRequest {
-    repeated HeavyPayload list = 1;
+message StreamingResponse {
+  string field = 1;
 }
 
-message HeavyPingResponse {
-    repeated HeavyPayload list = 1;
+message OneOfRequest {}
+
+message ResponseOne {
+  string field = 1;
+}
+
+message ResponseTwo {
+  string field = 1;
+}
+
+message OneOfResponse {
+  oneof response {
+    ResponseOne response_one = 1;
+    ResponseTwo response_two = 2;
+  }
 }
 
 service PingService {
@@ -37,10 +46,14 @@ service PingService {
         body: "*"
       };
   };
-  rpc HeavyPing(HeavyPingRequest) returns (HeavyPingResponse) {
+  rpc OneOf(OneOfRequest) returns (OneOfResponse) {
       option (google.api.http) = {
-        post: "/heavyping"
-        body: "*"
+        get: "/oneof"
+      };
+    }
+  rpc Streaming(stream StreamingRequest) returns (stream StreamingResponse) {
+      option (google.api.http) = {
+        get: "/streaming"
       };
   };
 }

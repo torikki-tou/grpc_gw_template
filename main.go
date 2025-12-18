@@ -3,10 +3,15 @@ package main
 import (
 	pb "buftest/gen/go"
 	"context"
+	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"net/http"
+	"time"
+
+	"github.com/tmc/grpc-websocket-proxy/wsproxy"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -37,7 +42,7 @@ func main() {
 
 	gwServer := &http.Server{
 		Addr:    "0.0.0.0:8090",
-		Handler: mux,
+		Handler: wsproxy.WebsocketProxy(mux),
 	}
 
 	fmt.Println("Starting server at 0.0.0.0:8090")
@@ -52,6 +57,41 @@ func (h *handler) Ping(ctx context.Context, req *pb.PingRequest) (*pb.PingRespon
 	return &pb.PingResponse{Field: req.Field}, nil
 }
 
-func (h *handler) HeavyPing(ctx context.Context, req *pb.HeavyPingRequest) (*pb.HeavyPingResponse, error) {
-	return &pb.HeavyPingResponse{List: req.List}, nil
+func (h *handler) OneOf(ctx context.Context, req *pb.Empty) (*pb.OneOfResponse, error) {
+	return &pb.OneOfResponse{
+		Response: &pb.OneOfResponse_ResponseOne{
+			ResponseOne: &pb.ResponseOne{Field: "test"},
+		},
+	}, nil
+}
+
+func (h *handler) Streaming(server grpc.BidiStreamingServer[pb.StreamingRequest, pb.StreamingResponse]) error {
+
+	go func() {
+		for {
+			message, err := server.Recv()
+			switch {
+			case err == nil:
+				fmt.Println(message.Field)
+			case errors.Is(err, io.EOF):
+				return
+			default:
+				log.Print(err)
+			}
+		}
+	}()
+
+	for range 100 {
+		err := server.Send(&pb.StreamingResponse{
+			Field: "test",
+		})
+		if err != nil {
+			log.Print(err)
+			return nil
+		}
+
+		time.Sleep(1 * time.Second)
+	}
+
+	return nil
 }
